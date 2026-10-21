@@ -1,91 +1,195 @@
-# PixelLab: Interactive Image Processing and Analysis Dashboard
+# 🖼️ Interactive Image Processing and Analysis Dashboard Using Python
 
-## Abstract
+An interactive web-based application for image processing, computer vision, and graphical analysis, built using Python, Streamlit, OpenCV, and Matplotlib.
 
-PixelLab is a local Streamlit dashboard for exploring fundamental digital image
-processing. Users upload JPG, JPEG, or PNG images, apply OpenCV operations, compare
-the original and processed results, inspect Matplotlib histograms, and download a
-processed PNG.
+## 📌 Project Overview
 
-## Problem statement and objectives
+The **Interactive Image Processing and Analysis Dashboard** allows users to upload images, apply different image-processing techniques, compare original and processed images, and visualize image characteristics through graphical analysis.
 
-Manual image-processing experiments often require separate scripts and do not make
-the effect of parameters easy to compare. This project provides an approachable
-visual interface for learning grayscale conversion, smoothing, edges, thresholding,
-enhancement, and Haar-cascade face detection.
+The application provides a simple, user-friendly dashboard that brings multiple image-processing and visualization operations together in one place.
 
-## Technology stack
+This project is developed as a **Python for Interactive Media and Visualization (PIMV) mini-project**.
 
-- **Streamlit**: interactive layout, upload control, sidebar widgets, and downloads.
-- **OpenCV**: conversion, filters, thresholds, Canny edges, and Haar-cascade detection.
-- **NumPy**: safe pixel-array and numerical operations.
-- **Pillow**: reliable uploaded-image decoding.
-- **Matplotlib**: grayscale and RGB histogram visualization.
+## 🎯 Objectives
 
-## Project structure
+- Develop an interactive image-processing dashboard using Python.
+- Apply image-processing techniques using OpenCV.
+- Visualize pixel-intensity distributions using Matplotlib.
+- Provide an easy-to-use interface with Streamlit.
+- Enable users to compare original and processed images.
+- Display useful image statistics and graphical visualizations.
+- Allow users to download processed images.
+
+## ✨ Features
+
+- 📤 **Image Upload:** Upload images in JPG, JPEG, and PNG formats.
+- 🖼️ **Image Preview:** Display the original image and its properties.
+- ⚫ **Grayscale Conversion:** Convert color images into grayscale.
+- 🌫️ **Gaussian Blur:** Reduce image noise and smooth image details.
+- 🔵 **Median Blur:** Apply median filtering to reduce certain types of noise.
+- 🔍 **Edge Detection:** Identify edges using the Canny algorithm.
+- 🎚️ **Thresholding:** Apply binary and adaptive thresholding techniques.
+- ☀️ **Brightness and Contrast:** Adjust image brightness and contrast.
+- ✨ **Image Sharpening:** Enhance visible edges and details.
+- 👤 **Face Detection:** Detect faces using OpenCV Haar Cascade when the required classifier is available.
+- 📊 **Histogram Visualization:** Analyze grayscale intensity and RGB channel distributions.
+- 📈 **Image Statistics:** View dimensions, pixel count, and intensity statistics.
+- ↔️ **Image Comparison:** Compare the original and processed images.
+- 💾 **Download Results:** Download processed images in PNG format.
+- 🖥️ **Interactive Dashboard:** Control image-processing operations through an easy-to-use web interface.
+
+*Note: Feature availability depends on the implemented application version. Face detection requires a compatible Haar Cascade classifier.*
+
+## 🛠️ Technologies Used
+
+| Technology | Purpose |
+|---|---|
+| Python | Core programming language |
+| Streamlit | Interactive web interface and dashboard |
+| OpenCV | Image processing and computer vision |
+| Matplotlib | Histograms and graphical visualization |
+| NumPy | Numerical operations and pixel-array processing |
+| Pillow (PIL) | Image loading, conversion, and handling |
+| Pytest | Automated testing of core functionality |
+
+## 🏗️ System Architecture
 
 ```text
-app.py
-modules/
-  image_utils.py
-  image_processing.py
-  image_analysis.py
-tests/test_image_processing.py
-requirements.txt
+             ┌──────────────────────┐
+             │        User          │
+             └──────────┬───────────┘
+                        │
+                        ▼
+             ┌──────────────────────┐
+             │  Streamlit Dashboard │
+             │  Upload and Controls │
+             └──────────┬───────────┘
+                        │
+                        ▼
+             ┌──────────────────────┐
+             │     Image Utils      │
+             │ Validation/Conversion│
+             └──────────┬───────────┘
+                        │
+                        ▼
+             ┌──────────────────────┐
+             │     OpenCV Engine    │
+             │  Image Processing    │
+             └──────────┬───────────┘
+                        │
+              ┌─────────┴─────────┐
+              ▼                   ▼
+   ┌──────────────────┐  ┌──────────────────┐
+   │ Matplotlib       │  │ Processed Image  │
+   │ Graphical        │  │ Preview/Download │
+   │ Analysis         │  │                  │
+   └────────┬─────────┘  └────────┬─────────┘
+            │                     │
+            └──────────┬──────────┘
+                       ▼
+             ┌──────────────────────┐
+             │ Display Results in   │
+             │ Interactive Dashboard│
+             └──────────────────────┘
 ```
 
-## Requirements and installation (Windows / VS Code)
+## 🔄 Application Workflow
 
-Install Python 3.10 or newer, open this folder in VS Code, and run PowerShell:
+1. Launch the application.
+2. Upload an image using the dashboard.
+3. View the original image and its properties.
+4. Select an image-processing operation.
+5. Adjust the available parameters.
+6. View the processed image.
+7. Analyze image characteristics using histograms and statistics.
+8. Compare the original and processed results.
+9. Download the processed image.
+
+## 📂 Project Structure
+
+```text
+ImageProcessingDashboard/
+│
+├── app.py
+├── requirements.txt
+├── README.md
+├── .gitignore
+│
+├── modules/
+│   ├── __init__.py
+│   ├── image_processing.py
+│   ├── image_analysis.py
+│   └── image_utils.py
+│
+├── assets/
+│   └── README.md
+│
+└── tests/
+    ├── __init__.py
+    └── test_image_processing.py
+```
+
+*The structure above represents the planned organization. Update it if the actual implementation differs.*
+
+## ⚙️ Installation and Setup
+
+### Prerequisites
+
+Install the following before running the project:
+
+- Python 3.10 or a compatible newer version supported by the selected dependencies.
+- Visual Studio Code.
+- Python extension for VS Code.
+- Git (optional, for version control).
+
+### Step 1: Clone the Repository
+
+Replace `YOUR_USERNAME` with your GitHub username.
+
+```bash
+git clone https://github.com/YOUR_USERNAME/ImageProcessingDashboard.git
+```
+
+Navigate to the project directory:
+
+```bash
+cd ImageProcessingDashboard
+```
+
+Alternatively, download the repository ZIP file and extract it.
+
+### Step 2: Create a Virtual Environment
+
+```bash
+python -m venv venv
+```
+
+### Step 3: Activate the Virtual Environment
+
+**Windows PowerShell:**
 
 ```powershell
-py -m venv venv
 .\venv\Scripts\Activate.ps1
+```
+
+**Windows Command Prompt:**
+
+```cmd
+venv\Scripts\activate.bat
+```
+
+If PowerShell blocks activation, use Command Prompt or configure your environment according to your system's security policies.
+
+### Step 4: Install Dependencies
+
+```bash
 python -m pip install --upgrade pip
+```
+
+Install the project dependencies:
+
+```bash
 python -m pip install -r requirements.txt
 ```
 
-If PowerShell blocks activation, use `venv\Scripts\python.exe` directly.
-
-## Run the application
-
-```powershell
-.\venv\Scripts\python.exe -m streamlit run app.py
-```
-
-Open the local URL shown by Streamlit, upload an image, choose an operation, and
-change its controls. Download uses the current processed result.
-
-## Workflow
-
-1. Upload a supported image (maximum 10 MB).
-2. Review dimensions and the original preview.
-3. Select an operation and adjust its parameters in the sidebar.
-4. Compare the output with the original.
-5. Inspect histograms and intensity statistics.
-6. Download the processed PNG.
-
-## Testing
-
-```powershell
-.\venv\Scripts\python.exe -m pytest -q
-```
-
-Tests use small synthetic arrays and cover conversion, filters, Canny, thresholding,
-enhancement, statistics, validation, and original-image preservation.
-
-## Known limitations and future enhancements
-
-Face detection depends on OpenCV's bundled Haar Cascade and may miss faces at unusual
-angles or lighting. It detects face-like regions but does not recognize identities.
-Future work could add batch processing, configurable export formats, more detectors,
-and an optional side-by-side slider.
-
-## Viva notes and conclusion
-
-Explain that RGB stores red, green, and blue channels while OpenCV commonly uses BGR
-internally; this app keeps uploaded data in RGB and converts only at boundaries.
-Grayscale stores intensity, blur reduces noise, Canny finds gradients, thresholding
-separates intensity classes, and a histogram counts intensity values rather than
-judging image quality. The project demonstrates these ideas without a database,
-cloud service, or machine-learning training requirement.
+If `requirements
