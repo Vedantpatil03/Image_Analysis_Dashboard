@@ -62,6 +62,26 @@ def encode_png(array: np.ndarray) -> bytes:
     return encoded.tobytes()
 
 
+def comparison_preview(
+    original: np.ndarray, processed: np.ndarray, split_percent: int
+) -> np.ndarray:
+    """Create a left-original/right-processed preview at a chosen split."""
+    if not 0 <= split_percent <= 100:
+        raise ValueError("Comparison split must be between 0 and 100.")
+    original_rgb = _as_rgb(original)
+    processed_rgb = _as_rgb(processed)
+    processed_rgb = cv2.resize(
+        processed_rgb, (original_rgb.shape[1], original_rgb.shape[0]),
+        interpolation=cv2.INTER_AREA,
+    )
+    split = round(original_rgb.shape[1] * split_percent / 100)
+    result = processed_rgb.copy()
+    result[:, :split] = original_rgb[:, :split]
+    if 0 < split < result.shape[1]:
+        result[:, split - 1:split + 1] = (255, 255, 255)
+    return result
+
+
 def _file_size(file: BinaryIO) -> int | None:
     try:
         position = file.tell()
@@ -83,4 +103,13 @@ def _validate_array(array: np.ndarray) -> np.ndarray:
         result = np.clip(result, 0, 255).astype(np.uint8)
     if result.ndim == 3 and result.shape[2] == 1:
         result = result[:, :, 0]
+    return result
+
+
+def _as_rgb(array: np.ndarray) -> np.ndarray:
+    result = _validate_array(array)
+    if result.ndim == 2:
+        return cv2.cvtColor(result, cv2.COLOR_GRAY2RGB)
+    if result.shape[2] == 4:
+        return result[:, :, :3]
     return result

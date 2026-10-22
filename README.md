@@ -35,6 +35,9 @@ This project is developed as a **Python for Interactive Media and Visualization 
 - 📊 **Histogram Visualization:** Analyze grayscale intensity and RGB channel distributions.
 - 📈 **Image Statistics:** View dimensions, pixel count, and intensity statistics.
 - ↔️ **Image Comparison:** Compare the original and processed images.
+- 🎚️ **Before-and-After Slider:** Adjust a divider to inspect original and processed pixels in one preview.
+- 🎨 **Color Palette Extraction:** Identify dominant colors with HEX, RGB, and percentage values.
+- ✅ **Image Quality Scorecard:** Review educational brightness, contrast, sharpness, noise, and exposure indicators.
 - 💾 **Download Results:** Download processed images in PNG format.
 - 🖥️ **Interactive Dashboard:** Control image-processing operations through an easy-to-use web interface.
 
@@ -104,6 +107,20 @@ This project is developed as a **Python for Interactive Media and Visualization 
 7. Analyze image characteristics using histograms and statistics.
 8. Compare the original and processed results.
 9. Download the processed image.
+10. Move the before-and-after divider to compare both versions in one preview.
+11. Review the dominant color palette and image-quality scorecard.
+
+## New analysis features
+
+- **Before-and-after slider:** The divider shows the original image on the left
+  and the current processed result on the right. The processed result is resized
+  to the original dimensions for a direct visual comparison.
+- **Color palette extraction:** OpenCV K-means clustering groups pixels into the
+  selected number of dominant colors and displays each color's HEX value, RGB
+  value, and image percentage.
+- **Image quality scorecard:** Displays pixel-derived brightness, contrast,
+  Laplacian sharpness, a small-noise estimate, and a simple exposure status.
+  These values are educational indicators rather than a universal quality grade.
 
 ## 📂 Project Structure
 
@@ -119,7 +136,7 @@ ImageProcessingDashboard/
 │   ├── __init__.py
 │   ├── image_processing.py
 │   ├── image_analysis.py
-│   └── image_utils.py
+│   ├── image_utils.py
 │
 ├── assets/
 │   └── README.md

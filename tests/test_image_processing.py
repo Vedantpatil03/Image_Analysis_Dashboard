@@ -1,7 +1,12 @@
 import numpy as np
 import pytest
 
-from modules.image_analysis import intensity_statistics, pixel_information
+from modules.image_analysis import (
+    dominant_color_palette,
+    image_quality_scorecard,
+    intensity_statistics,
+    pixel_information,
+)
 from modules.image_processing import (
     adjust_brightness_contrast,
     binary_threshold,
@@ -11,6 +16,7 @@ from modules.image_processing import (
     sharpen,
     to_grayscale,
 )
+from modules.image_utils import comparison_preview
 
 
 @pytest.fixture
@@ -63,3 +69,28 @@ def test_invalid_input_is_rejected():
         to_grayscale(np.array([]))
     with pytest.raises(ValueError):
         canny_edges(np.ones((2, 2), dtype=np.uint8), 200, 100)
+
+
+def test_palette_returns_sorted_colors_and_percentages():
+    image = np.zeros((10, 10, 3), dtype=np.uint8)
+    image[:7] = (255, 0, 0)
+    image[7:] = (0, 0, 255)
+    palette = dominant_color_palette(image, 2)
+    assert palette[0]["RGB"] in {(255, 0, 0), (0, 0, 255)}
+    assert sum(item["Percentage"] for item in palette) == pytest.approx(100, abs=0.1)
+
+
+def test_quality_scorecard_identifies_exposure_and_metrics():
+    dark = np.zeros((8, 8, 3), dtype=np.uint8)
+    quality = image_quality_scorecard(dark)
+    assert quality["Exposure"] == "Underexposed"
+    assert quality["Brightness"] == 0.0
+    assert quality["Contrast"] == 0.0
+
+
+def test_comparison_preview_has_original_and_processed_halves(image):
+    processed = np.full_like(image, 255)
+    preview = comparison_preview(image, processed, 50)
+    assert preview.shape == image.shape
+    np.testing.assert_array_equal(preview[:, 0], image[:, 0])
+    np.testing.assert_array_equal(preview[:, -1], processed[:, -1])

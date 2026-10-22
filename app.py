@@ -8,7 +8,9 @@ import matplotlib.pyplot as plt
 import streamlit as st
 
 from modules.image_analysis import (
+    dominant_color_palette,
     grayscale_histogram,
+    image_quality_scorecard,
     intensity_statistics,
     pixel_information,
     rgb_histogram,
@@ -24,7 +26,13 @@ from modules.image_processing import (
     sharpen,
     to_grayscale,
 )
-from modules.image_utils import encode_png, load_pil_image, pil_to_rgb_array, rgb_to_display_array
+from modules.image_utils import (
+    comparison_preview,
+    encode_png,
+    load_pil_image,
+    pil_to_rgb_array,
+    rgb_to_display_array,
+)
 
 st.set_page_config(page_title="PixelLab Dashboard", page_icon="🖼️", layout="wide")
 
@@ -81,6 +89,8 @@ def main() -> None:
         st.info(notice)
     _show_comparison(original, processed, operation, uploaded.name)
     _show_analysis(original, processed)
+    _show_quality_scorecard(original)
+    _show_color_palette(original)
 
 
 def _parameters(operation: str) -> dict:
@@ -133,6 +143,19 @@ def _process(image, operation: str, parameters: dict):
 
 def _show_comparison(original, processed, operation: str, filename: str) -> None:
     st.subheader("Image comparison")
+    split_percent = st.slider(
+        "Before-and-after divider",
+        0,
+        100,
+        50,
+        help="Choose how much of the preview shows the original image.",
+        key="comparison_split",
+    )
+    st.image(
+        comparison_preview(original, processed, split_percent),
+        caption=f"Original: {split_percent}% | Processed: {100 - split_percent}%",
+        use_container_width=True,
+    )
     left, right = st.columns(2)
     with left:
         st.markdown("**Original**")
@@ -171,6 +194,44 @@ def _show_analysis(original, processed) -> None:
     st.json({key: round(value, 2) for key, value in stats.items()})
 
 
+def _show_quality_scorecard(image) -> None:
+    st.subheader("Image quality scorecard")
+    st.caption(
+        "These are educational indicators calculated from pixel values, not a universal "
+        "professional image-quality rating."
+    )
+    quality = image_quality_scorecard(image)
+    cards = st.columns(5)
+    for card, (label, value) in zip(cards, quality.items()):
+        card.metric(label, value)
+    st.progress(
+        min(max(quality["Brightness"] / 255, 0.0), 1.0),
+        text="Brightness position in the 0–255 intensity range",
+    )
+
+
+def _show_color_palette(image) -> None:
+    st.subheader("Dominant color palette")
+    count = st.slider("Colors to extract", 2, 8, 5, key="palette_count")
+    try:
+        palette = dominant_color_palette(image, count)
+    except ValueError as exc:
+        st.error(str(exc))
+        return
+    columns = st.columns(len(palette))
+    for column, color in zip(columns, palette):
+        red, green, blue = color["RGB"]
+        column.markdown(
+            f'<div style="height:70px;border-radius:8px;background:{color["HEX"]};'
+            'border:1px solid #9aa5b1;"></div>',
+            unsafe_allow_html=True,
+        )
+        column.markdown(
+            f'**{color["HEX"]}**  \nRGB {red}, {green}, {blue}  \n'
+            f'{color["Percentage"]:.2f}%'
+        )
+
+
 def _empty_state() -> None:
     st.info("Upload an image from the sidebar to begin.")
     columns = st.columns(3)
@@ -197,7 +258,49 @@ def _apply_style() -> None:
         [data-testid="stAppViewContainer"] .main p,
         [data-testid="stAppViewContainer"] .main label,
         [data-testid="stAppViewContainer"] .main [data-testid="stCaptionContainer"] {
-            color: #172033;
+            color: #172033 !important;
+        }
+        [data-testid="stAppViewContainer"] .main
+        [data-testid="stWidgetLabel"],
+        [data-testid="stAppViewContainer"] .main
+        [data-testid="stWidgetLabel"] *,
+        [data-testid="stAppViewContainer"] .main
+        [data-testid="stExpander"] summary,
+        [data-testid="stAppViewContainer"] .main
+        [data-testid="stExpander"] summary *,
+        [data-testid="stAppViewContainer"] .main
+        [data-testid="stMarkdownContainer"] p,
+        [data-testid="stAppViewContainer"] .main
+        [data-testid="stCaptionContainer"] * {
+            color: #172033 !important;
+        }
+        [data-testid="stAppViewContainer"] .main div[data-testid="stWidgetLabel"],
+        [data-testid="stAppViewContainer"] .main div[data-testid="stWidgetLabel"] *,
+        [data-testid="stAppViewContainer"] .main [data-testid="stSlider"] label,
+        [data-testid="stAppViewContainer"] .main [data-testid="stSlider"] label *,
+        [data-testid="stAppViewContainer"] .main [data-testid="stNumberInput"] label,
+        [data-testid="stAppViewContainer"] .main [data-testid="stNumberInput"] label *,
+        [data-testid="stAppViewContainer"] .main [data-testid="stCheckbox"] label,
+        [data-testid="stAppViewContainer"] .main [data-testid="stCheckbox"] label * {
+            color: #172033 !important;
+            font-weight: 600 !important;
+        }
+        .stSelectbox label,
+        .stSelectbox label *,
+        .stSelectSlider label,
+        .stSelectSlider label *,
+        .stSlider label,
+        .stSlider label *,
+        .stNumberInput label,
+        .stNumberInput label *,
+        .stCheckbox label,
+        .stCheckbox label *,
+        [data-testid="stExpander"] summary,
+        [data-testid="stExpander"] summary * {
+            color: #172033 !important;
+            opacity: 1 !important;
+            -webkit-text-fill-color: #172033 !important;
+            text-shadow: none !important;
         }
         [data-testid="stMetric"] {
             background: #ffffff;

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import matplotlib.pyplot as plt
+import cv2
 import numpy as np
 
 from .image_processing import to_grayscale
@@ -55,3 +56,55 @@ def rgb_histogram(image: np.ndarray) -> plt.Figure:
     axis.legend()
     figure.tight_layout()
     return figure
+
+
+def dominant_color_palette(image: np.ndarray, color_count: int = 5) -> list[dict[str, object]]:
+    """Return dominant RGB colors with percentages and hexadecimal values."""
+    if color_count < 2 or color_count > 10:
+        raise ValueError("Color count must be between 2 and 10.")
+    array = np.asarray(image)
+    if array.size == 0:
+        raise ValueError("An image is required for palette extraction.")
+    if array.ndim == 2:
+        array = np.repeat(array[:, :, None], 3, axis=2)
+    if array.shape[2] == 4:
+        array = array[:, :, :3]
+    pixels = np.ascontiguousarray(array[:, :, :3].reshape(-1, 3).astype(np.float32))
+    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 20, 1.0)
+    _, labels, centers = cv2.kmeans(
+        pixels, color_count, None, criteria, 3, cv2.KMEANS_PP_CENTERS
+    )
+    counts = np.bincount(labels.ravel(), minlength=color_count)
+    order = np.argsort(counts)[::-1]
+    palette = []
+    for index in order:
+        red, green, blue = np.clip(np.rint(centers[index]), 0, 255).astype(int)
+        percentage = counts[index] / len(pixels) * 100
+        palette.append({
+            "RGB": (int(red), int(green), int(blue)),
+            "HEX": f"#{red:02X}{green:02X}{blue:02X}",
+            "Percentage": round(float(percentage), 2),
+        })
+    return palette
+
+
+def image_quality_scorecard(image: np.ndarray) -> dict[str, object]:
+    """Estimate brightness, contrast, sharpness, noise, and exposure status."""
+    grayscale = to_grayscale(image).astype(np.float32)
+    brightness = float(grayscale.mean())
+    contrast = float(grayscale.std())
+    sharpness = float(cv2.Laplacian(grayscale, cv2.CV_32F).var())
+    noise = float(np.median(np.abs(grayscale - cv2.GaussianBlur(grayscale, (3, 3), 0))))
+    if brightness < 70:
+        exposure = "Underexposed"
+    elif brightness > 190:
+        exposure = "Overexposed"
+    else:
+        exposure = "Balanced"
+    return {
+        "Brightness": round(brightness, 2),
+        "Contrast": round(contrast, 2),
+        "Sharpness": round(sharpness, 2),
+        "Noise estimate": round(noise, 2),
+        "Exposure": exposure,
+    }
