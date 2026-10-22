@@ -16,7 +16,6 @@ from modules.image_processing import (
     sharpen,
     to_grayscale,
 )
-from modules.image_utils import comparison_preview
 
 
 @pytest.fixture
@@ -87,10 +86,3 @@ def test_quality_scorecard_identifies_exposure_and_metrics():
     assert quality["Brightness"] == 0.0
     assert quality["Contrast"] == 0.0
 
-
-def test_comparison_preview_has_original_and_processed_halves(image):
-    processed = np.full_like(image, 255)
-    preview = comparison_preview(image, processed, 50)
-    assert preview.shape == image.shape
-    np.testing.assert_array_equal(preview[:, 0], image[:, 0])
-    np.testing.assert_array_equal(preview[:, -1], processed[:, -1])

@@ -27,7 +27,6 @@ from modules.image_processing import (
     to_grayscale,
 )
 from modules.image_utils import (
-    comparison_preview,
     encode_png,
     load_pil_image,
     pil_to_rgb_array,
@@ -143,19 +142,6 @@ def _process(image, operation: str, parameters: dict):
 
 def _show_comparison(original, processed, operation: str, filename: str) -> None:
     st.subheader("Image comparison")
-    split_percent = st.slider(
-        "Before-and-after divider",
-        0,
-        100,
-        50,
-        help="Choose how much of the preview shows the original image.",
-        key="comparison_split",
-    )
-    st.image(
-        comparison_preview(original, processed, split_percent),
-        caption=f"Original: {split_percent}% | Processed: {100 - split_percent}%",
-        use_container_width=True,
-    )
     left, right = st.columns(2)
     with left:
         st.markdown("**Original**")
